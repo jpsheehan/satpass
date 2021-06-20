@@ -1,0 +1,34 @@
+body {
+    font-family: Helvetica, sans-serif;
+    padding: 0px;
+    margin: 0px;
+}
+
+main {
+    columns: 2;
+}
+
+.pass {
+    break-inside: avoid;
+    text-align: center;
+}
+
+.pass img {
+    width: 400px;
+    height: auto;
+}
+
+.notes {
+    padding-bottom: 4em;
+    font-style: italic;
+}
+
+.break-column {
+    break-after: column;
+    padding-bottom: 4em;
+}
+
+.epoch {
+    font-size: small;
+    color: #777;
+}
