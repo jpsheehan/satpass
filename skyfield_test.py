@@ -85,7 +85,12 @@ def plot_graphs(satellite, location, event, tz=timezone.utc):
     else:
         print("Skipping", filename)
 
-    return filename
+    return filename, get_max_elevation(data)
+
+def get_max_elevation(data):
+    _theta, r, _time = unzip_data(data)
+
+    return 90 - min(r)
 
 def plot_polar_graph(ax, data, tz=timezone.utc):
     theta, r, _t = unzip_data(data)
@@ -160,6 +165,7 @@ class Pass:
         self.aos = aos
         self.los = los
         self.duration = los.utc_datetime() - aos.utc_datetime()
+        self.elevation = None
         self.graphs_polar = None
 
     def __repr__(self):
@@ -167,11 +173,12 @@ class Pass:
             "aos": format_time(self.aos, self.event.tz),
             "los": format_time(self.los, self.event.tz),
             "duration": self.duration.total_seconds(),
+            "elevation": self.elevation,
             "image_path": self.graphs_polar
         })
 
     def create_graphs(self):
-        self.graphs_polar = plot_graphs(self.event.satellite, (self.event.location.lat, self.event.location.lon), (self.aos, self.los), self.event.tz)
+        self.graphs_polar, self.elevation = plot_graphs(self.event.satellite, (self.event.location.lat, self.event.location.lon), (self.aos, self.los), self.event.tz)
 
 class Location:
     def __init__(self, lat, lon, city, country):
@@ -227,7 +234,7 @@ def generate_report(event, output):
             minutes = math.floor(total_secs / 60.0)
             seconds = str(int(total_secs - minutes * 60)).rjust(2,'0')
             minutes = str(minutes).rjust(2,'0')
-            f.write(f"<p class='details'><strong>AOS:</strong> {format_time(p.aos, event.tz)}<br /><strong>LOS:</strong> {format_time(p.los, event.tz)}<br /><strong>Duration:</strong> {minutes + ':' + seconds}</p>")
+            f.write(f"<p class='details'><strong>AOS:</strong> {format_time(p.aos, event.tz)}<br /><strong>LOS:</strong> {format_time(p.los, event.tz)}<br /><strong>Duration:</strong> {minutes + ':' + seconds}<br /><strong>Max. Elevation:</strong> {int(p.elevation)}&deg;</p>")
             f.write(f"<img src='{p.graphs_polar}' />")
             f.write("<p class='notes'>Notes:</p>")
             f.write("</div>")
