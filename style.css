@@ -1,34 +1,28 @@
 body {
-    font-family: Helvetica, sans-serif;
-    padding: 0px;
-    margin: 0px;
+    max-width: initial !important;
 }
 
-main {
-    columns: 2;
+table td:last-child {
+    width: 100%;
+    min-width: 200px;
 }
 
-.pass {
-    break-inside: avoid;
+table {
     text-align: center;
 }
 
-.pass img {
-    width: 400px;
-    height: auto;
+td, th {
+    white-space: nowrap;
+    text-align: center !important;
 }
 
-.notes {
-    padding-bottom: 4em;
-    font-style: italic;
+td.polar {
+    white-space: initial !important;
+    min-width: 400px;
+    padding: 0px;
 }
 
-.break-column {
-    break-after: column;
-    padding-bottom: 4em;
+img {
+    margin-bottom: 0px !important;
 }
 
-.epoch {
-    font-size: small;
-    color: #777;
-}

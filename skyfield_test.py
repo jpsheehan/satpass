@@ -156,7 +156,8 @@ class Event:
         for aos, los in events:
             p = Pass(self, aos, los)
             p.create_graphs()
-            self.passes.append(p)
+            if int(p.elevation) > 0:
+                self.passes.append(p)
 
 class Pass:
 
@@ -203,7 +204,11 @@ def generate_report(event, output):
         f.write("<html>")
         f.write("""<head>
                 <title>ARISS SSTV Event Details</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link rel="stylesheet" type="text/css" href="style.css" />
+                <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
                 </head>""")
         f.write("<body>")
 
@@ -225,27 +230,34 @@ def generate_report(event, output):
         f.write(f"<p>The epoch for the trajectory data is {format_time(event.epoch, event.tz)}. This data will become unreliable if a prediction is made too far in the future (several days) from this date.")
         f.write(f"<p>The event starts at {format_time(event.start_utc, event.tz)} and ends at {format_time(event.end_utc, event.tz)}. The downlink frequency from the International Space Station is {event.downlink:.3f} MHz FM.</p>")
         f.write(f"<p class='break-column'>There are {len(event.passes)} passes in this timespan.</p>")
+        f.write("<table>")
+        f.write("<thead>")
+        f.write("<tr><th>Pass</th><th>AOS/LOS</th><th>Duration</th><th>Max. Elevation</th><th>Polar Graph</th><th>Notes</th></tr>")
+        f.write("</thead>")
+        f.write("<tbody>")
 
         for i, p in enumerate(event.passes):
-            f.write("<div class='pass'>")
-            f.write(f"<h3>Pass {i+1}</h3>")
-            f.write(f"<p class='epoch'>as at {format_time(event.epoch, event.tz)}</p>")
+            f.write("<tr class='pass'>")
+            f.write(f"<td>{i+1}</td>")
             total_secs = p.duration.total_seconds()
             minutes = math.floor(total_secs / 60.0)
             seconds = str(int(total_secs - minutes * 60)).rjust(2,'0')
             minutes = str(minutes).rjust(2,'0')
-            f.write(f"<p class='details'><strong>AOS:</strong> {format_time(p.aos, event.tz)}<br /><strong>LOS:</strong> {format_time(p.los, event.tz)}<br /><strong>Duration:</strong> {minutes + ':' + seconds}<br /><strong>Max. Elevation:</strong> {int(p.elevation)}&deg;</p>")
-            f.write(f"<img src='{p.graphs_polar}' />")
-            f.write("<p class='notes'>Notes:</p>")
-            f.write("</div>")
-
+            f.write(f"<td>{format_time(p.aos, event.tz)}<br />{format_time(p.los, event.tz)}</td>")
+            f.write(f"<td>{minutes + ':' + seconds}</td>")
+            f.write(f"<td>{int(p.elevation)}&deg;</td>")
+            f.write(f"<td class='polar'><img src='{p.graphs_polar}' /></td>")
+            f.write(f"<td class='notes'></td>")
+            f.write("</tr>")
+        f.write("</tbody>")
+        f.write("</table>")
         f.write("</div>")
         f.write("</body>")
         f.write("</html>")
 
 def main():
     START_OF_EVENT = (2021, 6, 21, 9, 40)
-    END_OF_EVENT = (2021, 6, 26, 18, 30)
+    END_OF_EVENT = (2021, 6, 27, 18, 30)
     CHRISTCHURCH = Location(-43.53189984688002, 172.63925976596593, "Christchurch", "New Zealand")
     iss = get_iss(reload=True)
     tz = timezone(timedelta(hours=+12))
