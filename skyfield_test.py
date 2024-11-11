@@ -30,10 +30,10 @@ def get_events(sat, coordinates, t0, t1, altitude=0.0):
     return sorted_events
 
 def format_time(t, tz=timezone.utc):
-    return t.astimezone(tz).strftime('%Y %b %d %H:%M:%S')
+    return t.astimezone(tz).strftime('%Y %b %d %a %I:%M:%S %p').replace(' 0', ' ')
 
 def format_time_for_filename(t, tz=timezone.utc):
-    return t.astimezone(tz).strftime('%Y%m%d%H%M%S')
+    return t.astimezone(tz).strftime('%Y%m%dT%H%M%S%z')
 
 def annotate_point(ax, theta, r, t, tz):
     ax.plot(theta, r, marker='o')

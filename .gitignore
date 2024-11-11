@@ -3,5 +3,6 @@
 *.html
 *.png
 *.tle
+*.pdf
 /.venv/
 !requirements.txt
