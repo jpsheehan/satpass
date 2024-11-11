@@ -32,6 +32,9 @@ def get_events(sat, coordinates, t0, t1, altitude=0.0):
 def format_time(t, tz=timezone.utc):
     return t.astimezone(tz).strftime('%Y %b %d %H:%M:%S')
 
+def format_time_for_filename(t, tz=timezone.utc):
+    return t.astimezone(tz).strftime('%Y%m%d%H%M%S')
+
 def annotate_point(ax, theta, r, t, tz):
     ax.plot(theta, r, marker='o')
     ax.annotate(t.astimezone(tz).strftime('%M:%S'), (theta, r), xytext=(theta, r-10))
@@ -66,7 +69,7 @@ def plot_graphs(satellite, location, event, tz=timezone.utc):
     aos, los = event
     #plt.title(format_time(aos, tz))
 
-    filename = os.path.join("images", format_time(aos, tz) + ".png")
+    filename = os.path.join("images", format_time_for_filename(aos, tz) + ".png")
 
     if not os.path.exists("images"):
         os.mkdir("images")
@@ -256,11 +259,11 @@ def generate_report(event, output):
         f.write("</html>")
 
 def main():
-    START_OF_EVENT = (2021, 6, 21, 9, 40)
-    END_OF_EVENT = (2021, 6, 27, 18, 30)
+    START_OF_EVENT = (2024, 11, 11, 11, 50)
+    END_OF_EVENT = (2024, 11, 18, 13, 40)
     CHRISTCHURCH = Location(-43.53189984688002, 172.63925976596593, "Christchurch", "New Zealand")
     iss = get_iss(reload=True)
-    tz = timezone(timedelta(hours=+12))
+    tz = timezone(timedelta(hours=+13))
     sstv_event = Event(iss, CHRISTCHURCH, START_OF_EVENT, END_OF_EVENT, tz, 145.800)
     sstv_event.process()
 
